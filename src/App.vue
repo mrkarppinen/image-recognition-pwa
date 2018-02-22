@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <header>
-      <span>IOR</span>
+      <span>Battle</span>
     </header>
     <main>
     <div v-if="!apiKeyOK" id="key-container">
@@ -12,6 +12,7 @@
       <capture v-on:imageCaptured="imageCaptured"></capture>
       <imageDisplay v-bind:src="dataUri" ></imageDisplay> 
       <analyze v-bind:dataUri="dataUri" v-bind:apiKey="apiKey" ></analyze>
+      <watson-analyze v-bind:dataUri="dataUri" v-bind:apiKey="apiKey"  ></watson-analyze>
     </div>  
     </main>
   </div>
@@ -22,13 +23,15 @@
 import Capture from './components/Capture'
 import ImageDisplay from './components/ImageDisplay'
 import Analyze from './components/Analyze'
+import WatsonAnalyze from './components/WatsonAnalyze'
 
 export default {
   name: 'app',
   components: {
     Capture,
     ImageDisplay,
-    Analyze
+    Analyze,
+    WatsonAnalyze
   },
   data(){
     return {
@@ -40,8 +43,8 @@ export default {
   created: function (){
   },
   methods: {
-    imageCaptured: function (dataUri) {
-      this.dataUri = dataUri;
+    imageCaptured: function (image) {
+      this.dataUri = image.dataUri;
 
     },
     saveKey: function (event){

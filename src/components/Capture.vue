@@ -15,7 +15,7 @@ export default {
                     let file = event.target.files[0]
                     getBase64(file).then(
                         data => {
-                            this.$emit('imageCaptured', data);
+                            this.$emit('imageCaptured', {dataUri: data} );
                         }
                     )
                 }

@@ -1,11 +1,11 @@
 <template>
 <div>
-<h2 v-if="dataUri" >AWS</h2>
-<button v-on:click="doAnalyze" v-if="dataUri.length > 0 && state == 'notAnalyzed' && labels.length == 0" id="analyze-button" >Analyze</button>
+<h2 v-if="dataUri" >Watson</h2>
+<button v-on:click="doAnalyze" v-if="dataUri && state == 'notAnalyzed' && labels.length == 0" id="analyze-button" >WatsonAnalyze</button>
 <img v-if="state=='loading'" className="image is-128x128" src="/static/img/icons/loading.svg" />
 <ul id="label-list">
 <li v-for="label in labels">
-    {{ label['Name'] }} : {{ label['Confidence'] }}
+    {{ label.class }} : {{ label.score }}
 </li>
  
 </ul>
@@ -15,7 +15,7 @@
 
 <script>
 export default {
-  name: 'analyze',
+  name: 'watson-analyze',
   props: ['dataUri', 'apiKey'],
   data () {
     return {
@@ -35,24 +35,27 @@ export default {
   methods: {
     doAnalyze: function () {
       this.state = 'loading';
+
+
       let index = this.dataUri.indexOf('base64,')
       let image = this.dataUri.substring((index + 'base64,'.length));
 
+
+   
       fetch('', {
         headers: {
-          'X-Api-Key': this.apiKey,
+          'x-Api-Key': this.apiKey,
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         method: 'POST',
-        body: JSON.stringify({
-          analyze: image
-        })
+        body: JSON.stringify({file: image})
       })
         .then((resp) => resp.json())
         .then((data) => {
-          if (data && data['Labels']) {
-            this.labels = data['Labels']
+          console.log(data);
+          if (data && data.classes) {
+            this.labels = data.classes;
           }
           this.state = 'analyzed';
         })
