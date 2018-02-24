@@ -11,8 +11,16 @@ export default {
 
 
 <style scoped>
+
 img {
-    width: 500px;
-    max-width: 90%;
+    max-width: 50%;
+}
+
+@media (min-width: 768px) {
+    img {
+        width: 500px;
+        max-width: 90%;
+    }
+
 }
 </style>

@@ -9,6 +9,9 @@
 </li>
  
 </ul>
+<div class="error">
+{{error}}
+</div>
 </div>
 </template>
 
@@ -20,7 +23,8 @@ export default {
   data () {
     return {
       labels: [],
-      state: 'notAnalyzed'
+      state: 'notAnalyzed',
+      error: ''
     }
   },
   created () {
@@ -30,6 +34,7 @@ export default {
         dataUri(val, oldval) { 
              this.labels = [];
              this.state = 'notAnalyzed';
+             this.error = '';
         }
       },
   methods: {
@@ -37,9 +42,8 @@ export default {
       this.state = 'loading';
 
 
-      let index = this.dataUri.indexOf('base64,')
+      let index = this.dataUri.indexOf('base64,');
       let image = this.dataUri.substring((index + 'base64,'.length));
-
 
    
       fetch('', {
@@ -53,15 +57,15 @@ export default {
       })
         .then((resp) => resp.json())
         .then((data) => {
-          console.log(data);
+
           if (data && data.classes) {
             this.labels = data.classes;
           }
           this.state = 'analyzed';
         })
         .catch((err) => {
-             console.error(err);
-             this.state = 'notAnalyzed';
+             this.error = JSON.stringify(err);
+             this.state = 'analyzed';
 
         });
 
@@ -83,5 +87,10 @@ export default {
 
 #label-list {
     list-style: none;
+}
+
+
+.error {
+  color: red;
 }
 </style>

@@ -1,8 +1,8 @@
 <template>
-<div id="capture">
-    <input v-on:change="imageCaptured" type="file" accept="image/*" id="image-file" ref="fileInput" />
-    <button id="load-button" @click="selectImg" ></button>
-</div>
+    <div id="capture">
+        <input v-on:change="imageCaptured" type="file" accept="image/*" id="image-file" ref="fileInput" />
+        <button id="load-button" @click="selectImg" ></button>
+    </div>
 </template>
 
 
@@ -30,10 +30,39 @@ function getBase64 (file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
     reader.readAsDataURL(file)
-    reader.onload = () => resolve(reader.result)
+    reader.onload = () => {
+
+        if (file.size <= 1000000){
+            resolve(reader.result); 
+        }else {
+            let scale = 1000000 / file.size;
+            scaleImage(reader.result, file.type, scale).then( (dataUri) => resolve(dataUri) )
+        }
+        
+    }
     reader.onerror = error => reject(error)
   })
 }
+
+
+function scaleImage(dataUri, type, scale){
+    return new Promise( (resolve, reject) => {
+            let img = document.createElement("img");
+            img.src = dataUri;
+            img.onload = () => {
+                
+                let canvas = document.createElement('canvas');
+                canvas.width = img.width * scale;
+                canvas.height = img.height * scale;
+                canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                resolve(canvas.toDataURL(type));                
+            }
+    });
+}
+
+
+
 </script>
 
 
